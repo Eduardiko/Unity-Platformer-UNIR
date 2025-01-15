@@ -26,7 +26,8 @@ public class Player : MonoBehaviour
     private float timeToShoot = 0;
     private int phase = 1;
     private float movementSpeed = 30f;
-    private float maximumSpeed = 35f;
+    private float maximumXSpeed = 35f;
+    private float maximumYSpeed = 15f;
     [HideInInspector] public int health = 0;
 
     private Vector2 lastInputDirection = Vector2.zero;
@@ -62,16 +63,19 @@ public class Player : MonoBehaviour
     {
         Vector2 direction = moveAction.ReadValue<Vector2>();
 
-        if (lastInputDirection != direction)
-            playerRigidBody.velocity = playerRigidBody.velocity / 2;
+        //if (lastInputDirection != direction)
+        //    playerRigidBody.velocity = playerRigidBody.velocity / 2;
 
         lastInputDirection = direction;
 
         playerRigidBody.AddForce(new Vector2(direction.x * movementSpeed, 0), ForceMode2D.Force);
         //playerRigidBody.velocity = new Vector2(direction.x * movementSpeed, playerRigidBody.velocity.y);
 
-        if (playerRigidBody.velocity.x >= maximumSpeed)
-            playerRigidBody.velocity = new Vector2(maximumSpeed, playerRigidBody.velocity.y);
+        if (playerRigidBody.velocity.x >= maximumXSpeed)
+            playerRigidBody.velocity = new Vector2(maximumXSpeed, playerRigidBody.velocity.y);
+
+        if (playerRigidBody.velocity.y >= maximumYSpeed)
+            playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, maximumYSpeed);
     }
 
     private void ApplyDamage(int ammount)
@@ -145,6 +149,20 @@ public class Player : MonoBehaviour
             playerRenderer.enabled = true;
             playerCollider.enabled = true;
         }
+    }
+
+    private void Jump()
+    {
+        if (playerRigidBody.velocity.y < 0f)
+            playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
+
+        playerRigidBody.AddForce(new Vector2(0, 15f), ForceMode2D.Impulse);
+    }
+
+    public void ActionJump(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            Jump();
     }
 
 }

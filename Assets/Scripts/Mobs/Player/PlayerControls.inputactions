@@ -22,6 +22,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "de64120c-ce25-4a95-8194-945056b76009",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -82,12 +91,12 @@
                 },
                 {
                     "name": "",
-                    "id": "42f3ee74-4410-4365-8021-a80cdb0a4aef",
+                    "id": "45a4a8dc-25b5-4b76-a390-5b0efd8e8dcb",
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Shoot",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
