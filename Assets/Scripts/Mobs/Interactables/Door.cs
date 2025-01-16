@@ -6,12 +6,10 @@ using UnityEngine;
 
 public class Door : Interactable
 {
-    public bool isOneUse = false;
     public Vector2 direction = Vector2.zero;
     public float distance = 0f;
     public float duration = 0f;
 
-    private bool interactable = true;
     private int goNegative = 1;
 
 
