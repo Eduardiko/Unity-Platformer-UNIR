@@ -32,8 +32,19 @@ public class Player : MonoBehaviour
 
     private Vector2 lastInputDirection = Vector2.zero;
 
+    float dashForce = 15f;
+    float dashOverflowDuration = 0.5f;
+    float dashStartTime = 0f;
+
+    float jumpOverflowDuration = 1.5f;
+    float jumpStartTime = 0f;
+
     float easeOutSpeedTime = 1.5f;
     float elapsedEaseOutSpeedTime = 0;
+
+    private bool isGrounded = false;
+    private float groundCheckDistance = 1f;
+    public LayerMask groundLayer;
 
     void Start()
     {
@@ -49,6 +60,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        PerformGroundCheck();
 
         if (timeToShoot > 0)
             timeToShoot -= Time.deltaTime;
@@ -56,6 +68,7 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
+        ApplyVelocityCapWithDecay();
         ReadContinuousInputs();
     }
 
@@ -63,19 +76,49 @@ public class Player : MonoBehaviour
     {
         Vector2 direction = moveAction.ReadValue<Vector2>();
 
-        //if (lastInputDirection != direction)
-        //    playerRigidBody.velocity = playerRigidBody.velocity / 2;
+        if (lastInputDirection != direction && direction.magnitude != 0)
+            playerRigidBody.velocity = new Vector2(0f, playerRigidBody.velocity.y);
 
         lastInputDirection = direction;
 
-        playerRigidBody.AddForce(new Vector2(direction.x * movementSpeed, 0), ForceMode2D.Force);
-        //playerRigidBody.velocity = new Vector2(direction.x * movementSpeed, playerRigidBody.velocity.y);
+        if (Mathf.Abs(playerRigidBody.velocity.x) < maximumXSpeed)
+            playerRigidBody.AddForce(new Vector2(direction.x * movementSpeed, 0), ForceMode2D.Force);
 
-        if (playerRigidBody.velocity.x >= maximumXSpeed)
-            playerRigidBody.velocity = new Vector2(maximumXSpeed, playerRigidBody.velocity.y);
+    }
 
-        if (playerRigidBody.velocity.y >= maximumYSpeed)
-            playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, maximumYSpeed);
+    void PerformGroundCheck()
+    {
+        isGrounded = Physics2D.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
+        print(isGrounded);
+        Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
+    }
+
+    void ApplyVelocityCapWithDecay()
+    {
+        if (Mathf.Abs(playerRigidBody.velocity.x) > maximumXSpeed)
+        {
+            float elapsedTime = Time.time - dashStartTime;
+
+            if (elapsedTime < dashOverflowDuration)
+            {
+                float direction = Mathf.Sign(playerRigidBody.velocity.x);
+                float newVelocityX = Mathf.Lerp(playerRigidBody.velocity.x, direction * maximumXSpeed, elapsedTime / dashOverflowDuration);
+                playerRigidBody.velocity = new Vector2(newVelocityX, playerRigidBody.velocity.y);
+            }
+        }
+
+        if (playerRigidBody.velocity.y > maximumYSpeed)
+        {
+            float elapsedTime = Time.time - jumpStartTime;
+
+            if (elapsedTime < jumpOverflowDuration)
+            {
+                float direction = Mathf.Sign(playerRigidBody.velocity.y);
+                float newVelocityY = Mathf.Lerp(playerRigidBody.velocity.y, direction * maximumYSpeed, elapsedTime / jumpOverflowDuration);
+                playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, newVelocityY);
+            }
+        }
+
     }
 
     private void ApplyDamage(int ammount)
@@ -156,13 +199,31 @@ public class Player : MonoBehaviour
         if (playerRigidBody.velocity.y < 0f)
             playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
 
-        playerRigidBody.AddForce(new Vector2(0, 15f), ForceMode2D.Impulse);
+        jumpStartTime = Time.time;
+
+        if(isGrounded)
+            playerRigidBody.AddForce(new Vector2(0, 15f + playerRigidBody.velocity.x / 2), ForceMode2D.Impulse);
+        else
+            playerRigidBody.AddForce(new Vector2(0, 15f), ForceMode2D.Impulse);
+
     }
 
     public void ActionJump(InputAction.CallbackContext context)
     {
         if (context.performed)
             Jump();
+    }
+
+    private void Dash()
+    {
+        playerRigidBody.AddForce(new Vector2(dashForce * lastInputDirection.x, 0f), ForceMode2D.Impulse);
+        dashStartTime = Time.time;
+    }
+
+    public void ActionDash(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            Dash();
     }
 
 }

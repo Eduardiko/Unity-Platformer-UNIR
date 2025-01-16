@@ -245,13 +245,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 131724619}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.77, y: -4.73, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: 7.38, y: 3.67, z: 0}
   m_LocalScale: {x: 18.817, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,7 +355,7 @@ GameObject:
   - component: {fileID: 932013235}
   - component: {fileID: 932013234}
   - component: {fileID: 932013236}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -423,8 +423,8 @@ Transform:
   m_GameObject: {fileID: 932013233}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.03, y: -4.73, z: 0}
-  m_LocalScale: {x: 18.817, y: 1, z: 1}
+  m_LocalPosition: {x: -0.099997, y: -4.73, z: 0}
+  m_LocalScale: {x: 171.70512, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -544,6 +544,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: de64120c-ce25-4a95-8194-945056b76009
     m_ActionName: Game/Jump[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1927283492}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: ActionDash
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 0551bcd9-d4e8-4b36-877c-8e72c53f725a
+    m_ActionName: Game/Dash[/Keyboard/leftShift]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: Game
@@ -563,6 +579,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeBetweenBullets: 2
   health: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!50 &1927283493
 Rigidbody2D:
   serializedVersion: 4
