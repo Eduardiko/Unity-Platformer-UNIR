@@ -8,7 +8,9 @@ public class LevelUP : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        collision.gameObject.GetComponent<Player>().UpgradePlayer(upgradeType);
+        if(collision.gameObject.GetComponent<Player>() != null)
+            collision.gameObject.GetComponent<Player>().UpgradePlayer(upgradeType);
+
         Destroy(gameObject);
     }
 }

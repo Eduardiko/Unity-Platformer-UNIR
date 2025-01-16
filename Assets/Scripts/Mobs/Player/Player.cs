@@ -61,6 +61,8 @@ public class Player : MonoBehaviour
     public LayerMask enemyLayer;
     Enemy nearestEnemy = null;
 
+    private Coroutine coyoteCoroutine = null;
+
     public int AvailableAirJumps { get => availableAirJumps; set => availableAirJumps = value; }
     public int MaxAirJumps { get => maxAirJumps; set => maxAirJumps = value; }
 
@@ -110,7 +112,31 @@ public class Player : MonoBehaviour
 
     void PerformRayCastChecks()
     {
-        isGrounded = Physics2D.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
+        bool rayCastGrounded = Physics2D.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
+
+        print(isGrounded);
+
+        if (rayCastGrounded)
+        {
+            isGrounded = true;
+
+            if (coyoteCoroutine != null)
+            {
+                StopCoroutine(coyoteCoroutine);
+                coyoteCoroutine = null;
+            }
+        }
+        else if (isGrounded)
+        {
+            if (coyoteCoroutine == null)
+                coyoteCoroutine = StartCoroutine(CoyoteTime());
+
+        } else if(coyoteCoroutine != null)
+        {
+            StopCoroutine(coyoteCoroutine);
+            coyoteCoroutine = null;
+        }
+
         Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
 
         if(isGrounded)
@@ -306,7 +332,17 @@ public class Player : MonoBehaviour
             shadowXSpeed = playerRigidBody.velocity.x;
 
             // Wait for 0.3 seconds before updating again
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    IEnumerator CoyoteTime()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.15f);
+
+            isGrounded = false;
         }
     }
 

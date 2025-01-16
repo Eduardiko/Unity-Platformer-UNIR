@@ -1,22 +1,80 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-
+using UnityEngine.UI;
+using System.Collections;
 
 public class SceneChanger : MonoBehaviour
 {
+    [SerializeField] private Image fadeImage;
+    [SerializeField] private float fadeDuration = 1.0f;
+
+    private void Start()
+    {
+        StartCoroutine(FadeOut());
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.R))
+            ReloadScene();
+    }
+
     public void ChangeScene(string sceneName)
     {
-        SceneManager.LoadScene(sceneName);
+        StartCoroutine(FadeToBlackBeforeLoad(sceneName));
     }
 
     public void ReloadScene()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        StartCoroutine(FadeToBlackBeforeLoad(SceneManager.GetActiveScene().name)); 
     }
 
     public void ExitGame()
     {
         Application.Quit();
+    }
+
+    public IEnumerator FadeToBlackBeforeLoad(string sceneName)
+    {
+        if (fadeImage == null)
+            yield break;
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Clamp01(elapsedTime / fadeDuration);
+
+            Color color = fadeImage.color;
+            color.a = alpha;
+            fadeImage.color = color;
+
+            yield return null;
+
+        }
+
+        SceneManager.LoadScene(sceneName);
+    }
+
+    public IEnumerator FadeOut()
+    {
+        if (fadeImage == null)
+            yield break;
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Clamp01(1 - (elapsedTime / fadeDuration));
+
+            Color color = fadeImage.color;
+            color.a = alpha;
+            fadeImage.color = color;
+
+            yield return null;
+        }
     }
 }
