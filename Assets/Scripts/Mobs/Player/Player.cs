@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
     private InputAction moveAction;
     private InputAction shootAction;
 
-    private Vector3 initPosition;
+    private Vector2 spawnPosition;
     private float timeToShoot = 0;
     private int phase = 1;
     private float movementSpeed = 30f;
@@ -73,7 +73,7 @@ public class Player : MonoBehaviour
         moveAction = playerInput.actions.FindAction("Move");
         shootAction = playerInput.actions.FindAction("Shoot");
 
-        initPosition = transform.position;
+        spawnPosition = transform.position;
 
         StartCoroutine(UpdateShadowXSpeed());
     }
@@ -174,12 +174,12 @@ public class Player : MonoBehaviour
         StartCoroutine(DisableColliderAndBlink(2f, 0.1f));
     }
 
-    public virtual void Die()
+    public void Die()
     {
         if (gameObject == null)
             return;
 
-        Destroy(gameObject);
+        gameObject.transform.position = spawnPosition;
     }
 
     public void Heal(int ammount)
@@ -221,7 +221,7 @@ public class Player : MonoBehaviour
     {
         if (playerCollider != null && playerRenderer != null)
         {
-            transform.position = initPosition;
+            transform.position = spawnPosition;
 
             playerCollider.enabled = false;
 
