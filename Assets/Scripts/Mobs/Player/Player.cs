@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UIElements.Experimental;
 
 public enum PlayerUpgrades {
-    DOUBLE_JUMP,
+    ADD_JUMP,
     DASH
 }
 
@@ -45,6 +45,12 @@ public class Player : MonoBehaviour
     private bool isGrounded = false;
     private float groundCheckDistance = 1f;
     public LayerMask groundLayer;
+
+    private int maxAirJumps = 0;
+    private int availableAirJumps = 0;
+
+    public int AvailableAirJumps { get => availableAirJumps; set => availableAirJumps = value; }
+    public int MaxAirJumps { get => maxAirJumps; set => maxAirJumps = value; }
 
     void Start()
     {
@@ -153,7 +159,8 @@ public class Player : MonoBehaviour
 
         switch (upgradeWith)
         {
-            case PlayerUpgrades.DOUBLE_JUMP:
+            case PlayerUpgrades.ADD_JUMP:
+                maxAirJumps++;
                 break;
             case PlayerUpgrades.DASH:
                 break;
@@ -201,16 +208,21 @@ public class Player : MonoBehaviour
 
         jumpStartTime = Time.time;
 
-        if(isGrounded)
+        if (isGrounded)
+        {
+            availableAirJumps = maxAirJumps;
             playerRigidBody.AddForce(new Vector2(0, 15f + playerRigidBody.velocity.x / 2), ForceMode2D.Impulse);
+        }
         else
+        {
+            availableAirJumps--;
             playerRigidBody.AddForce(new Vector2(0, 15f), ForceMode2D.Impulse);
-
+        }
     }
 
     public void ActionJump(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && (availableAirJumps > 0 || isGrounded))
             Jump();
     }
 
