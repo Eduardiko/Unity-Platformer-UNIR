@@ -53,6 +53,14 @@ public class Player : MonoBehaviour
 
     private bool canWallJump = false;
 
+    public float searchInteractableRadius = 5f;
+    public LayerMask interactableLayer;
+    Interactable nearestInteractable = null;
+    
+    public float searchEnemyRadius = 10f;
+    public LayerMask enemyLayer;
+    Enemy nearestEnemy = null;
+
     public int AvailableAirJumps { get => availableAirJumps; set => availableAirJumps = value; }
     public int MaxAirJumps { get => maxAirJumps; set => maxAirJumps = value; }
 
@@ -73,6 +81,8 @@ public class Player : MonoBehaviour
     private void Update()
     {
         PerformRayCastChecks();
+        SetNearestInteractable();
+        SetNearestEnemy();
 
         if (timeToShoot > 0)
             timeToShoot -= Time.deltaTime;
@@ -282,6 +292,12 @@ public class Player : MonoBehaviour
             Dash();
     }
 
+    public void ActionInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed && nearestInteractable != null)
+            nearestInteractable.Interact();
+    }
+
     IEnumerator UpdateShadowXSpeed()
     {
         while (true)
@@ -292,6 +308,62 @@ public class Player : MonoBehaviour
             // Wait for 0.3 seconds before updating again
             yield return new WaitForSeconds(0.3f);
         }
+    }
+
+    private void SetNearestInteractable()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, searchInteractableRadius, interactableLayer);
+
+        if (colliders.Length == 0)
+            nearestInteractable = null;
+        
+        float closestDistance = Mathf.Infinity;
+
+        foreach (Collider2D collider in colliders)
+        {
+            Interactable interactable = collider.GetComponent<Interactable>();
+
+            float distance = (transform.position - collider.transform.position).magnitude;
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                nearestInteractable = interactable;
+            }
+        }
+    }
+
+    private void SetNearestEnemy()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, searchEnemyRadius, enemyLayer);
+        
+        if (colliders.Length == 0)
+            nearestEnemy = null;
+
+        float closestDistance = Mathf.Infinity;
+
+        foreach (Collider2D collider in colliders)
+        {
+            Enemy enemy = collider.GetComponent<Enemy>();
+
+            float distance = (transform.position - collider.transform.position).magnitude;
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                nearestEnemy = enemy;
+            }
+
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        // Visualize the search radius in the editor
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, searchInteractableRadius);
+        
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, searchEnemyRadius);
+
     }
 
 }

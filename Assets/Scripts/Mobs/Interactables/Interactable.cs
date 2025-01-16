@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class Interactable : MonoBehaviour
 {
-    protected abstract void Interact();
+    public abstract void Interact();
 
-    protected abstract void ResetInteractable();
+    //public abstract void ResetInteractable();
 }
