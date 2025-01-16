@@ -407,9 +407,9 @@ GameObject:
   - component: {fileID: 430967474}
   - component: {fileID: 430967473}
   - component: {fileID: 430967472}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: MovingPlatform
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2335,11 +2335,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1035461052116931871, guid: 2e30e307b6a536e4eb3fa8788c0e20f6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.62
+      value: -4.44
       objectReference: {fileID: 0}
     - target: {fileID: 1035461052116931871, guid: 2e30e307b6a536e4eb3fa8788c0e20f6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.0844212
+      value: 5.03
       objectReference: {fileID: 0}
     - target: {fileID: 1035461052116931871, guid: 2e30e307b6a536e4eb3fa8788c0e20f6, type: 3}
       propertyPath: m_LocalPosition.z
