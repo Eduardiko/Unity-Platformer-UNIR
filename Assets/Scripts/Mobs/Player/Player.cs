@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
     private float movementSpeed = 30f;
     private float maximumXSpeed = 35f;
     private float maximumYSpeed = 15f;
+    private float shadowXSpeed = 0f;
     [HideInInspector] public int health = 0;
 
     private Vector2 lastInputDirection = Vector2.zero;
@@ -62,6 +63,8 @@ public class Player : MonoBehaviour
         shootAction = playerInput.actions.FindAction("Shoot");
 
         initPosition = transform.position;
+
+        StartCoroutine(UpdateShadowXSpeed());
     }
 
     private void Update()
@@ -95,7 +98,6 @@ public class Player : MonoBehaviour
     void PerformGroundCheck()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
-        print(isGrounded);
         Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
     }
 
@@ -211,7 +213,10 @@ public class Player : MonoBehaviour
         if (isGrounded)
         {
             availableAirJumps = maxAirJumps;
-            playerRigidBody.AddForce(new Vector2(0, 15f + playerRigidBody.velocity.x / 2), ForceMode2D.Impulse);
+            if(playerRigidBody.velocity.x == 0f)
+                playerRigidBody.AddForce(new Vector2(0, 15f + shadowXSpeed / 2), ForceMode2D.Impulse);
+            else
+                playerRigidBody.AddForce(new Vector2(0, 15f + playerRigidBody.velocity.x / 2), ForceMode2D.Impulse);
         }
         else
         {
@@ -236,6 +241,18 @@ public class Player : MonoBehaviour
     {
         if (context.performed)
             Dash();
+    }
+
+    IEnumerator UpdateShadowXSpeed()
+    {
+        while (true)
+        {
+            // Store the current X velocity of the Rigidbody with a delay
+            shadowXSpeed = playerRigidBody.velocity.x;
+
+            // Wait for 0.3 seconds before updating again
+            yield return new WaitForSeconds(0.3f);
+        }
     }
 
 }
