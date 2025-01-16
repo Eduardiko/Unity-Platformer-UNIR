@@ -44,11 +44,14 @@ public class Player : MonoBehaviour
     float elapsedEaseOutSpeedTime = 0;
 
     private bool isGrounded = false;
+    private Vector2 touchingWallFrom = Vector2.zero;
     private float groundCheckDistance = 1f;
     public LayerMask groundLayer;
 
     private int maxAirJumps = 0;
     private int availableAirJumps = 0;
+
+    private bool canWallJump = false;
 
     public int AvailableAirJumps { get => availableAirJumps; set => availableAirJumps = value; }
     public int MaxAirJumps { get => maxAirJumps; set => maxAirJumps = value; }
@@ -69,7 +72,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        PerformGroundCheck();
+        PerformRayCastChecks();
 
         if (timeToShoot > 0)
             timeToShoot -= Time.deltaTime;
@@ -85,7 +88,7 @@ public class Player : MonoBehaviour
     {
         Vector2 direction = moveAction.ReadValue<Vector2>();
 
-        if (lastInputDirection != direction && direction.magnitude != 0)
+        if (lastInputDirection != direction && direction.magnitude != 0 && touchingWallFrom.magnitude == 0)
             playerRigidBody.velocity = new Vector2(0f, playerRigidBody.velocity.y);
 
         lastInputDirection = direction;
@@ -95,10 +98,29 @@ public class Player : MonoBehaviour
 
     }
 
-    void PerformGroundCheck()
+    void PerformRayCastChecks()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
         Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
+
+        if(isGrounded)
+            availableAirJumps = maxAirJumps;
+
+        if (Physics2D.Raycast(transform.position, Vector3.right, groundCheckDistance, groundLayer))
+        {
+            touchingWallFrom = Vector2.right;
+        } else if (Physics2D.Raycast(transform.position, Vector3.left, groundCheckDistance, groundLayer))
+        {
+            touchingWallFrom = Vector2.left;
+        } else
+        {
+            canWallJump = false;
+            touchingWallFrom = Vector2.zero;
+        } 
+
+        Debug.DrawRay(transform.position, Vector3.right * groundCheckDistance, Color.green);
+        Debug.DrawRay(transform.position, Vector3.left * groundCheckDistance, Color.green);
+
     }
 
     void ApplyVelocityCapWithDecay()
@@ -179,6 +201,12 @@ public class Player : MonoBehaviour
             ApplyDamage(0);
     }
 
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Wall")
+            canWallJump = true;
+    }
+
     public IEnumerator DisableColliderAndBlink(float duration, float blinkInterval)
     {
         if (playerCollider != null && playerRenderer != null)
@@ -205,29 +233,40 @@ public class Player : MonoBehaviour
 
     private void Jump()
     {
-        if (playerRigidBody.velocity.y < 0f)
-            playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
-
         jumpStartTime = Time.time;
 
         if (isGrounded)
         {
-            availableAirJumps = maxAirJumps;
             if(playerRigidBody.velocity.x == 0f)
                 playerRigidBody.AddForce(new Vector2(0, 15f + shadowXSpeed / 2), ForceMode2D.Impulse);
             else
-                playerRigidBody.AddForce(new Vector2(0, 15f + playerRigidBody.velocity.x / 2), ForceMode2D.Impulse);
+                playerRigidBody.AddForce(new Vector2(0, 15f + Mathf.Abs(playerRigidBody.velocity.x) / 2), ForceMode2D.Impulse);
         }
         else
         {
-            availableAirJumps--;
-            playerRigidBody.AddForce(new Vector2(0, 15f), ForceMode2D.Impulse);
+            if(canWallJump && touchingWallFrom.magnitude != 0)
+            {
+                // Reset Falling Speed
+                if (playerRigidBody.velocity.y < 0f)
+                    playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
+
+                playerRigidBody.AddForce(new Vector2(15f * -touchingWallFrom.x, 25f), ForceMode2D.Impulse);
+            }
+            else if(availableAirJumps > 0)
+            {
+                // Reset Falling Speed
+                if (playerRigidBody.velocity.y < 0f)
+                    playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
+
+                availableAirJumps--;
+                playerRigidBody.AddForce(new Vector2(0, 15f), ForceMode2D.Impulse);
+            }
         }
     }
 
     public void ActionJump(InputAction.CallbackContext context)
     {
-        if (context.performed && (availableAirJumps > 0 || isGrounded))
+        if (context.performed)
             Jump();
     }
 
