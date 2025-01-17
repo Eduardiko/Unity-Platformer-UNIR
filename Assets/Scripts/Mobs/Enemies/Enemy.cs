@@ -4,15 +4,44 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private PatrolState patrolState;
+    private AttackState attackState;
+    private ChaseState chaseState;
+
+    private State<Enemy> currentState;
+
+    private Player playerTarget;
+
+    public PatrolState PatrolState { get => patrolState; }
+    public AttackState AttackState { get => attackState; }
+    public ChaseState ChaseState { get => chaseState; }
+    public Player PlayerTarget { get => playerTarget; set => playerTarget = value; }
+
     void Start()
     {
-        
+        patrolState = GetComponent<PatrolState>();
+        attackState = GetComponent<AttackState>();
+        chaseState = GetComponent<ChaseState>();
+
+        currentState = patrolState;
+        patrolState.OnEnterState(this);
+
+        playerTarget = null;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if(currentState != null)
+            currentState.OnUpdateState();
+    }
+
+    public void ChangeState(State<Enemy> state)
+    {
+        if(currentState != null)
+        {
+            currentState.OnExitState();
+            currentState = state;
+            currentState.OnEnterState(this);
+        }
     }
 }
