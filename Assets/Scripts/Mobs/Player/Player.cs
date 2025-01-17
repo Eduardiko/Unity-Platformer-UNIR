@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
     private float maximumXSpeed = 35f;
     private float maximumYSpeed = 15f;
     private float shadowXSpeed = 0f;
-    [HideInInspector] public int health = 0;
+    [HideInInspector] public int health = 3;
 
     private Vector2 lastInputDirection = Vector2.zero;
 
@@ -65,6 +65,7 @@ public class Player : MonoBehaviour
 
     public int AvailableAirJumps { get => availableAirJumps; set => availableAirJumps = value; }
     public int MaxAirJumps { get => maxAirJumps; set => maxAirJumps = value; }
+    public Vector2 SpawnPosition { get => spawnPosition; set => spawnPosition = value; }
 
     void Start()
     {
@@ -187,7 +188,7 @@ public class Player : MonoBehaviour
 
     }
 
-    private void ApplyDamage(int ammount)
+    public void ApplyDamage(int ammount)
     {
         health-= ammount;
 
@@ -196,8 +197,6 @@ public class Player : MonoBehaviour
             //AudioManager.Instance.PlaySFX();
             Die();
         }
-
-        StartCoroutine(DisableColliderAndBlink(2f, 0.1f));
     }
 
     public void Die()
@@ -234,7 +233,7 @@ public class Player : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Enemy")
-            ApplyDamage(0);
+            ApplyDamage(1);
     }
 
     private void OnCollisionStay2D(Collision2D collision)

@@ -25,6 +25,4 @@ public class ChaseState : State<Enemy>
     public override void OnExitState()
     {
     }
-
-
 }

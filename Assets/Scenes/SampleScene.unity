@@ -2204,8 +2204,9 @@ GameObject:
   - component: {fileID: 1784220564}
   - component: {fileID: 1784220563}
   - component: {fileID: 1784220562}
-  - component: {fileID: 1784220566}
   - component: {fileID: 1784220567}
+  - component: {fileID: 1784220568}
+  - component: {fileID: 1784220569}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
@@ -2229,7 +2230,7 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
-  searchPlayerRadius: 5
+  searchPlayerRadius: 10
   patrolVelocity: 10
 --- !u!114 &1784220563
 MonoBehaviour:
@@ -2311,8 +2312,38 @@ Transform:
   - {fileID: 922150849}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!58 &1784220566
-CircleCollider2D:
+--- !u!114 &1784220567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784220561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04dbf963c32751940ad1cde87ceedb32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chaseVelocity: 10
+  unChaseDistance: 15
+  attackDistance: 5
+--- !u!114 &1784220568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784220561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b10931ee21b56a94597eb2811b6ba9d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unChaseDistance: 15
+  shootTime: 1
+  bullet: {fileID: 0}
+--- !u!61 &1784220569
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2340,26 +2371,22 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 0.5}
+    newSize: {x: 1, y: 0.5}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Radius: 5
---- !u!114 &1784220567
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1784220561}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04dbf963c32751940ad1cde87ceedb32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  chaseVelocity: 10
-  unChaseDistance: 10
+  m_Size: {x: 1, y: 0.5}
+  m_EdgeRadius: 0
 --- !u!1 &1887893021
 GameObject:
   m_ObjectHideFlags: 0
