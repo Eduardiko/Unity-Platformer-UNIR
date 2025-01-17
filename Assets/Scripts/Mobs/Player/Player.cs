@@ -63,6 +63,9 @@ public class Player : MonoBehaviour
 
     private Coroutine coyoteCoroutine = null;
 
+    public GameObject interactableCrossHair;
+    public GameObject enemyCrossHair;
+
     public int AvailableAirJumps { get => availableAirJumps; set => availableAirJumps = value; }
     public int MaxAirJumps { get => maxAirJumps; set => maxAirJumps = value; }
     public Vector2 SpawnPosition { get => spawnPosition; set => spawnPosition = value; }
@@ -79,6 +82,9 @@ public class Player : MonoBehaviour
         spawnPosition = transform.position;
 
         StartCoroutine(UpdateShadowXSpeed());
+
+        interactableCrossHair.SetActive(false);
+        enemyCrossHair.SetActive(false);
     }
 
     private void Update()
@@ -350,7 +356,11 @@ public class Player : MonoBehaviour
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, searchInteractableRadius, interactableLayer);
 
         if (colliders.Length == 0)
+        {
             nearestInteractable = null;
+            interactableCrossHair.SetActive(false);
+            return;
+        }
         
         float closestDistance = Mathf.Infinity;
 
@@ -365,6 +375,9 @@ public class Player : MonoBehaviour
                 nearestInteractable = interactable;
             }
         }
+
+        interactableCrossHair.SetActive(true);
+        interactableCrossHair.transform.position = nearestInteractable.transform.position;
     }
 
     private void SetNearestEnemy()
@@ -372,7 +385,11 @@ public class Player : MonoBehaviour
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, searchEnemyRadius, enemyLayer);
         
         if (colliders.Length == 0)
+        {
             nearestEnemy = null;
+            enemyCrossHair.SetActive(false);
+            return;
+        }
 
         float closestDistance = Mathf.Infinity;
 
@@ -386,8 +403,10 @@ public class Player : MonoBehaviour
                 closestDistance = distance;
                 nearestEnemy = enemy;
             }
-
         }
+
+        enemyCrossHair.SetActive(true);
+        enemyCrossHair.transform.position = enemyCrossHair.transform.position;
     }
 
     private void OnDrawGizmosSelected()
