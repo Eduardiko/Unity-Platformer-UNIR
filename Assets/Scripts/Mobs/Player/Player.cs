@@ -66,9 +66,12 @@ public class Player : MonoBehaviour
     public GameObject interactableCrossHair;
     public GameObject enemyCrossHair;
 
+    private bool isDashUnlocked = false;
+
     public int AvailableAirJumps { get => availableAirJumps; set => availableAirJumps = value; }
     public int MaxAirJumps { get => maxAirJumps; set => maxAirJumps = value; }
     public Vector2 SpawnPosition { get => spawnPosition; set => spawnPosition = value; }
+    public bool IsDashUnlocked { get => isDashUnlocked; set => isDashUnlocked = value; }
 
     void Start()
     {
@@ -319,7 +322,7 @@ public class Player : MonoBehaviour
 
     public void ActionDash(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && isDashUnlocked)
             Dash();
     }
 
@@ -327,6 +330,22 @@ public class Player : MonoBehaviour
     {
         if (context.performed && nearestInteractable != null)
             nearestInteractable.Interact();
+    }
+
+    public void ActionAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed && nearestEnemy != null)
+        {
+            // Reset Falling Speed
+            if (playerRigidBody.velocity.y < 0f)
+                playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
+
+            playerRigidBody.AddForce(new Vector2(playerRigidBody.velocity.x, 15f), ForceMode2D.Impulse);
+
+            nearestEnemy.ApplyDamage();
+
+            enemyCrossHair.SetActive(false);
+        }
     }
 
     IEnumerator UpdateShadowXSpeed()
@@ -382,7 +401,7 @@ public class Player : MonoBehaviour
 
     private void SetNearestEnemy()
     {
-        if(nearestEnemy != null)
+        if(nearestEnemy != null && nearestEnemy.Health > 0)
         {
             enemyCrossHair.SetActive(true);
             enemyCrossHair.transform.position = nearestEnemy.transform.position;

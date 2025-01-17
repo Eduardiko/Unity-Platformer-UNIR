@@ -12,10 +12,13 @@ public class Enemy : MonoBehaviour
 
     private Player playerTarget;
 
+    private int health = 3;
+
     public PatrolState PatrolState { get => patrolState; }
     public AttackState AttackState { get => attackState; }
     public ChaseState ChaseState { get => chaseState; }
     public Player PlayerTarget { get => playerTarget; set => playerTarget = value; }
+    public int Health { get => health; set => health = value; }
 
     void Start()
     {
@@ -43,5 +46,18 @@ public class Enemy : MonoBehaviour
             currentState = state;
             currentState.OnEnterState(this);
         }
+    }
+
+    public void ApplyDamage()
+    {
+        health--;
+
+        if (health <= 0)
+            Die();
+    }
+
+    private void Die()
+    {
+        Destroy(gameObject);
     }
 }
