@@ -382,6 +382,12 @@ public class Player : MonoBehaviour
 
     private void SetNearestEnemy()
     {
+        if(nearestEnemy != null)
+        {
+            enemyCrossHair.SetActive(true);
+            enemyCrossHair.transform.position = nearestEnemy.transform.position;
+        }
+
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, searchEnemyRadius, enemyLayer);
         
         if (colliders.Length == 0)
@@ -397,6 +403,9 @@ public class Player : MonoBehaviour
         {
             Enemy enemy = collider.GetComponent<Enemy>();
 
+            if (enemy == null)
+                return;
+
             float distance = (transform.position - collider.transform.position).magnitude;
             if (distance < closestDistance)
             {
@@ -404,9 +413,6 @@ public class Player : MonoBehaviour
                 nearestEnemy = enemy;
             }
         }
-
-        enemyCrossHair.SetActive(true);
-        enemyCrossHair.transform.position = enemyCrossHair.transform.position;
     }
 
     private void OnDrawGizmosSelected()
