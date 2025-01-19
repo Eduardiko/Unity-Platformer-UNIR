@@ -24467,6 +24467,35 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 407281900990201705, guid: 2e30e307b6a536e4eb3fa8788c0e20f6, type: 3}
   m_PrefabInstance: {fileID: 4492715841648025205}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1274204862 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8323018761492200908, guid: 6ac846c62753b1b41bf84c05d726c8e6, type: 3}
+  m_PrefabInstance: {fileID: 3278022235101241451}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1274204864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1274204862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1493f7c9834c8947b6cd6b789361d75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreText: {fileID: 1274204865}
+--- !u!114 &1274204865 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8734122296784791737, guid: 6ac846c62753b1b41bf84c05d726c8e6, type: 3}
+  m_PrefabInstance: {fileID: 3278022235101241451}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1274204862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1377838036 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7282003972567710350, guid: d2748d0ccd0aebe428928129548b7bfe, type: 3}
@@ -24873,9 +24902,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1199729511498394836, guid: d2748d0ccd0aebe428928129548b7bfe, type: 3}
-      propertyPath: m_TileSpriteArray.Array.data[3].m_Data
+      propertyPath: m_TileSpriteArray.Array.data[0].m_Data
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 1199729511498394836, guid: d2748d0ccd0aebe428928129548b7bfe, type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[3].m_Data
+      value: 
+      objectReference: {fileID: 524919738, guid: a687efe80bd349a4a82b9c6950a4720f, type: 3}
     - target: {fileID: 1199729511498394836, guid: d2748d0ccd0aebe428928129548b7bfe, type: 3}
       propertyPath: m_Tiles.Array.data[3].second.m_TileIndex
       value: 3
@@ -24893,12 +24926,20 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1199729511498394836, guid: d2748d0ccd0aebe428928129548b7bfe, type: 3}
-      propertyPath: m_TileSpriteArray.Array.data[3].m_RefCount
+      propertyPath: m_TileSpriteArray.Array.data[0].m_RefCount
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1199729511498394836, guid: d2748d0ccd0aebe428928129548b7bfe, type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[3].m_RefCount
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1199729511498394836, guid: d2748d0ccd0aebe428928129548b7bfe, type: 3}
       propertyPath: m_Tiles.Array.data[3].second.m_AllTileFlags
       value: 1073741825
+      objectReference: {fileID: 0}
+    - target: {fileID: 1199729511498394836, guid: d2748d0ccd0aebe428928129548b7bfe, type: 3}
+      propertyPath: m_Tiles.Array.data[0].second.m_TileSpriteIndex
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1199729511498394836, guid: d2748d0ccd0aebe428928129548b7bfe, type: 3}
       propertyPath: m_Tiles.Array.data[3].second.m_TileSpriteIndex
@@ -26181,6 +26222,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5124126127459496932, guid: 6ac846c62753b1b41bf84c05d726c8e6, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8734122296784791737, guid: 6ac846c62753b1b41bf84c05d726c8e6, type: 3}
+      propertyPath: m_text
+      value: '00:00:00
+
+'
+      objectReference: {fileID: 0}
     - target: {fileID: 8905327176495915988, guid: 6ac846c62753b1b41bf84c05d726c8e6, type: 3}
       propertyPath: m_Name
       value: UICanvas
@@ -26188,7 +26239,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8323018761492200908, guid: 6ac846c62753b1b41bf84c05d726c8e6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1274204864}
   m_SourcePrefab: {fileID: 100100000, guid: 6ac846c62753b1b41bf84c05d726c8e6, type: 3}
 --- !u!1001 &4492715841648025205
 PrefabInstance:

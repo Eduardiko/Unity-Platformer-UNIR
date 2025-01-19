@@ -8,6 +8,8 @@ public class SceneChanger : MonoBehaviour
 {
     [SerializeField] private Image fadeImage;
     [SerializeField] private float fadeDuration = 1.0f;
+    [SerializeField] private string onCollisionSceneName = "";
+    [SerializeField] private UITime uiTime;
 
     private void Start()
     {
@@ -37,6 +39,11 @@ public class SceneChanger : MonoBehaviour
 
     public IEnumerator FadeToBlackBeforeLoad(string sceneName)
     {
+        if(uiTime != null)
+        {
+            uiTime.IsPaused = true;
+        }
+
         if (fadeImage == null)
             yield break;
 
@@ -76,5 +83,11 @@ public class SceneChanger : MonoBehaviour
 
             yield return null;
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "Player")
+            ChangeScene(onCollisionSceneName);
     }
 }
