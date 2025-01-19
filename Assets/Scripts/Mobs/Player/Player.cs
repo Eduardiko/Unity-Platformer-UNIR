@@ -353,6 +353,15 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void ActionGoToTitleSceen(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            SceneChanger[] sceneChangers = FindObjectsOfType<SceneChanger>();
+            sceneChangers[0].ChangeScene("TitleScreen");
+        }
+    }
+
     IEnumerator UpdateShadowXSpeed()
     {
         while (true)
