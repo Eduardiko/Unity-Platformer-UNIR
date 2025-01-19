@@ -19,7 +19,11 @@ public class AttackState : State<Enemy>
     public override void OnUpdateState()
     {
         if ((controller.PlayerTarget.transform.position - transform.position).magnitude >= unChaseDistance)
-            controller.ChangeState(controller.ChaseState);
+        {
+            State<Enemy> chaseOut = controller.ChangeState(controller.ChaseState);
+            if (chaseOut == null)
+                controller.ChangeState(controller.PatrolState);
+        }
 
         if (shootTimer <= 0f)
             Attack();

@@ -38,7 +38,9 @@ public class PatrolState : State<Enemy>
         if (colliders.Length > 0)
         {
             controller.PlayerTarget = colliders[0].gameObject.GetComponent<Player>();
-            controller.ChangeState(controller.ChaseState);
+            State<Enemy> chaseOut = controller.ChangeState(controller.ChaseState);
+            if(chaseOut == null)
+                controller.ChangeState(controller.AttackState);
         }
             
     }

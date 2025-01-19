@@ -6,8 +6,11 @@ public class RefillJumps : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Player player = collision.gameObject.GetComponent<Player>();
-        player.AvailableAirJumps = player.MaxAirJumps;
-        Destroy(gameObject);
+        if (collision.gameObject.GetComponent<Player>() != null)
+        {
+            Player player = collision.gameObject.GetComponent<Player>();
+            player.AvailableAirJumps = player.MaxAirJumps;
+            Destroy(gameObject);
+        }
     }
 }

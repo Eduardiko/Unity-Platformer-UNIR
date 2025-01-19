@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
 
     protected Collider2D playerCollider;
     protected SpriteRenderer playerRenderer;
-    protected Rigidbody2D playerRigidBody;
+    private Rigidbody2D playerRigidBody;
 
     // Continous Input Actions
     private PlayerInput playerInput;
@@ -72,6 +72,7 @@ public class Player : MonoBehaviour
     public int MaxAirJumps { get => maxAirJumps; set => maxAirJumps = value; }
     public Vector2 SpawnPosition { get => spawnPosition; set => spawnPosition = value; }
     public bool IsDashUnlocked { get => isDashUnlocked; set => isDashUnlocked = value; }
+    public Rigidbody2D PlayerRigidBody { get => playerRigidBody; set => playerRigidBody = value; }
 
     void Start()
     {
@@ -214,6 +215,7 @@ public class Player : MonoBehaviour
             return;
 
         gameObject.transform.position = spawnPosition;
+        playerRigidBody.velocity = Vector2.zero;
     }
 
     public void Heal(int ammount)
@@ -229,6 +231,7 @@ public class Player : MonoBehaviour
         {
             case PlayerUpgrades.ADD_JUMP:
                 maxAirJumps++;
+                availableAirJumps++;
                 break;
             case PlayerUpgrades.DASH:
                 break;
@@ -290,6 +293,7 @@ public class Player : MonoBehaviour
         {
             if(canWallJump && touchingWallFrom.magnitude != 0)
             {
+                //Wall Jump
                 // Reset Falling Speed
                 if (playerRigidBody.velocity.y < 0f)
                     playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
@@ -298,6 +302,7 @@ public class Player : MonoBehaviour
             }
             else if(availableAirJumps > 0)
             {
+                //Ait Jump
                 // Reset Falling Speed
                 if (playerRigidBody.velocity.y < 0f)
                     playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
@@ -340,7 +345,7 @@ public class Player : MonoBehaviour
             if (playerRigidBody.velocity.y < 0f)
                 playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
 
-            playerRigidBody.AddForce(new Vector2(playerRigidBody.velocity.x, 15f), ForceMode2D.Impulse);
+            playerRigidBody.AddForce(new Vector2(0f, 15f), ForceMode2D.Impulse);
 
             nearestEnemy.ApplyDamage();
 
@@ -385,6 +390,9 @@ public class Player : MonoBehaviour
 
         foreach (Collider2D collider in colliders)
         {
+            if (collider.tag == "buttonDoor")
+                continue;
+
             Interactable interactable = collider.GetComponent<Interactable>();
 
             float distance = (transform.position - collider.transform.position).magnitude;
@@ -395,8 +403,11 @@ public class Player : MonoBehaviour
             }
         }
 
-        interactableCrossHair.SetActive(true);
-        interactableCrossHair.transform.position = nearestInteractable.transform.position;
+        if(nearestInteractable != null)
+        {
+            interactableCrossHair.SetActive(true);
+            interactableCrossHair.transform.position = nearestInteractable.transform.position;
+        }
     }
 
     private void SetNearestEnemy()

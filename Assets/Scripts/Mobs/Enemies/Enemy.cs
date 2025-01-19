@@ -38,14 +38,16 @@ public class Enemy : MonoBehaviour
             currentState.OnUpdateState();
     }
 
-    public void ChangeState(State<Enemy> state)
+    public State<Enemy> ChangeState(State<Enemy> state)
     {
-        if(currentState != null)
+        if(currentState != null && state != null)
         {
             currentState.OnExitState();
             currentState = state;
             currentState.OnEnterState(this);
         }
+
+        return state;
     }
 
     public void ApplyDamage()
