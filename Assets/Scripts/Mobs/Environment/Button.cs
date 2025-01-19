@@ -17,10 +17,10 @@ public class Button : MonoBehaviour
         }
     }
 
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(activable)
+        if (activable)
             Interact();
+        Destroy(gameObject);
     }
 }
