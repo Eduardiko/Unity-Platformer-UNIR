@@ -9,7 +9,7 @@ public class UnlockDash : MonoBehaviour
         if(collision.gameObject.tag == "Player")
         {
             collision.gameObject.GetComponent<Player>().IsDashUnlocked = true;
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 }

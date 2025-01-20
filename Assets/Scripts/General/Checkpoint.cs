@@ -46,6 +46,10 @@ public class Checkpoint : MonoBehaviour
                 _interactable.StopAllCoroutines();
                 _interactable.IsInteractable = true;
                 _interactable.GoNegative = 1;
+            } 
+            else if (objectToReturn.TryGetComponent<Enemy>(out Enemy _enemy))
+            {
+                _enemy.Health = 3;
             }
 
             objectToReturn.transform.position = initialPositions[objectToReturn];

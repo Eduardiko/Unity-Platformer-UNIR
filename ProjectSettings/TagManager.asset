@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Wall
   - buttonDoor
+  - Enemy
   layers:
   - Default
   - TransparentFX
