@@ -22,7 +22,6 @@ public class Player : MonoBehaviour
     private InputAction moveAction;
     private InputAction shootAction;
 
-    private Vector2 spawnPosition;
     private float timeToShoot = 0;
     private int phase = 1;
     private float movementSpeed = 30f;
@@ -68,11 +67,13 @@ public class Player : MonoBehaviour
 
     private bool isDashUnlocked = false;
 
+    private Checkpoint lastCheckpoint = null;
+
     public int AvailableAirJumps { get => availableAirJumps; set => availableAirJumps = value; }
     public int MaxAirJumps { get => maxAirJumps; set => maxAirJumps = value; }
-    public Vector2 SpawnPosition { get => spawnPosition; set => spawnPosition = value; }
     public bool IsDashUnlocked { get => isDashUnlocked; set => isDashUnlocked = value; }
     public Rigidbody2D PlayerRigidBody { get => playerRigidBody; set => playerRigidBody = value; }
+    public Checkpoint LastCheckpoint { get => lastCheckpoint; set => lastCheckpoint = value; }
 
     void Start()
     {
@@ -82,8 +83,6 @@ public class Player : MonoBehaviour
 
         moveAction = playerInput.actions.FindAction("Move");
         shootAction = playerInput.actions.FindAction("Shoot");
-
-        spawnPosition = transform.position;
 
         StartCoroutine(UpdateShadowXSpeed());
 
@@ -214,7 +213,7 @@ public class Player : MonoBehaviour
         if (gameObject == null)
             return;
 
-        gameObject.transform.position = spawnPosition;
+        lastCheckpoint.ResetArea();
         playerRigidBody.velocity = Vector2.zero;
     }
 
@@ -258,7 +257,6 @@ public class Player : MonoBehaviour
     {
         if (playerCollider != null && playerRenderer != null)
         {
-            transform.position = spawnPosition;
 
             playerCollider.enabled = false;
 

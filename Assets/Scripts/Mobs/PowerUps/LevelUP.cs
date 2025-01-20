@@ -11,7 +11,7 @@ public class LevelUP : MonoBehaviour
         if (collision.gameObject.GetComponent<Player>() != null)
         {
             collision.gameObject.GetComponent<Player>().UpgradePlayer(upgradeType);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
 
     }

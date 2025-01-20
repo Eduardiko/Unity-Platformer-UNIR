@@ -8,7 +8,7 @@ public class ChainInteractable : Interactable
 
     public override void Interact()
     {
-        if(interactable)
+        if(IsInteractable)
         {
             foreach (Interactable objectToActivate in objectsToActivate)
             {
@@ -16,7 +16,7 @@ public class ChainInteractable : Interactable
             }
 
             if(isOneUse)
-                interactable = false;
+                IsInteractable = false;
         }
         
     }

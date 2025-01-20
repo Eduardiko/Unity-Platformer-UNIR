@@ -60,6 +60,7 @@ public class Enemy : MonoBehaviour
 
     private void Die()
     {
-        Destroy(gameObject);
+        health = 3;
+        gameObject.SetActive(false);
     }
 }

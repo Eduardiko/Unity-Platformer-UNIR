@@ -10,14 +10,12 @@ public class Door : Interactable
     public float distance = 0f;
     public float duration = 0f;
 
-    private int goNegative = 1;
-
 
     public override void Interact()
     {
-        if(interactable)
+        if(IsInteractable)
         {
-            interactable = false;
+            IsInteractable = false;
             StartCoroutine(TranslateOverTime(direction * goNegative, distance, duration));
             goNegative *= -1;
         }
@@ -42,6 +40,6 @@ public class Door : Interactable
         transform.position = targetPosition;
 
         if(!isOneUse)
-            interactable = true;
+            IsInteractable = true;
     }
 }

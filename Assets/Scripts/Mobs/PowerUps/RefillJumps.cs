@@ -10,7 +10,7 @@ public class RefillJumps : MonoBehaviour
         {
             Player player = collision.gameObject.GetComponent<Player>();
             player.AvailableAirJumps = player.MaxAirJumps;
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 }
