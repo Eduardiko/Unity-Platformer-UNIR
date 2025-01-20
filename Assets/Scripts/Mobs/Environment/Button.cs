@@ -19,5 +19,8 @@ public class Button : MonoBehaviour
         Interact();
         
         gameObject.SetActive(false);
+
+        AudioManager.Instance.PlaySFX(5);
+
     }
 }

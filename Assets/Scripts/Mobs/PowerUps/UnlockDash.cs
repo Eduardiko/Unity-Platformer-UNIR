@@ -10,6 +10,7 @@ public class UnlockDash : MonoBehaviour
         {
             collision.gameObject.GetComponent<Player>().IsDashUnlocked = true;
             gameObject.SetActive(false);
+            AudioManager.Instance.PlaySFX(1);
         }
     }
 }

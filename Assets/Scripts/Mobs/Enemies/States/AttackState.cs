@@ -47,5 +47,6 @@ public class AttackState : State<Enemy>
 
         GameObject newBullet = Instantiate(bullet, transform.position, rotationToTarget);
 
+        AudioManager.Instance.PlaySFX(4);
     }
 }

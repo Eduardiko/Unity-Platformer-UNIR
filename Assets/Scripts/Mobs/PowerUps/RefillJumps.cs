@@ -11,6 +11,7 @@ public class RefillJumps : MonoBehaviour
             Player player = collision.gameObject.GetComponent<Player>();
             player.AvailableAirJumps = player.MaxAirJumps;
             gameObject.SetActive(false);
+            AudioManager.Instance.PlaySFX(2);
         }
     }
 }

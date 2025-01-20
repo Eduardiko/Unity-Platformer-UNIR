@@ -17,7 +17,9 @@ public class ChainInteractable : Interactable
 
             if(isOneUse)
                 IsInteractable = false;
+
+            AudioManager.Instance.PlaySFX(5);
         }
-        
+
     }
 }

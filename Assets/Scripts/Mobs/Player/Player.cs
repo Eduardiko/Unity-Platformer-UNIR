@@ -44,7 +44,7 @@ public class Player : MonoBehaviour
 
     private bool isGrounded = false;
     private Vector2 touchingWallFrom = Vector2.zero;
-    private float groundCheckDistance = 1f;
+    private float groundCheckDistance = 0.6f;
     public LayerMask groundLayer;
 
     private int maxAirJumps = 0;
@@ -69,6 +69,13 @@ public class Player : MonoBehaviour
 
     private Checkpoint lastCheckpoint = null;
 
+    public float maxSquash = 0.6f; // Minimum height when squashing
+    public float maxStretch = 1.4f; // Maximum height when stretching
+    public float stretchFactor = 0.05f; // Sensitivity to velocity changes
+    public float smoothSpeed = 0.5f; // Smoothing for transitions
+
+    private Vector3 originalScale;
+
     public int AvailableAirJumps { get => availableAirJumps; set => availableAirJumps = value; }
     public int MaxAirJumps { get => maxAirJumps; set => maxAirJumps = value; }
     public bool IsDashUnlocked { get => isDashUnlocked; set => isDashUnlocked = value; }
@@ -88,6 +95,8 @@ public class Player : MonoBehaviour
 
         interactableCrossHair.SetActive(false);
         enemyCrossHair.SetActive(false);
+
+        originalScale = transform.localScale;
     }
 
     private void Update()
@@ -110,10 +119,11 @@ public class Player : MonoBehaviour
     {
         Vector2 direction = moveAction.ReadValue<Vector2>();
 
-        if (lastInputDirection != direction && direction.magnitude != 0 && touchingWallFrom.magnitude == 0)
-            playerRigidBody.velocity = new Vector2(0f, playerRigidBody.velocity.y);
+        if (lastInputDirection != direction && direction.magnitude != 0 && touchingWallFrom.magnitude == 0 && lastInputDirection.x * playerRigidBody.velocity.x >= 0)
+            playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x/4, playerRigidBody.velocity.y);
 
-        lastInputDirection = direction;
+        if(direction.magnitude > 0)
+            lastInputDirection = direction;
 
         if (Mathf.Abs(playerRigidBody.velocity.x) < maximumXSpeed)
             playerRigidBody.AddForce(new Vector2(direction.x * movementSpeed, 0), ForceMode2D.Force);
@@ -123,8 +133,6 @@ public class Player : MonoBehaviour
     void PerformRayCastChecks()
     {
         bool rayCastGrounded = Physics2D.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
-
-        print(isGrounded);
 
         if (rayCastGrounded)
         {
@@ -238,6 +246,8 @@ public class Player : MonoBehaviour
                 break;
         }
 
+        AudioManager.Instance.PlaySFX(1);
+
         //AudioManager.Instance.PlaySFX(2, 0.5f);
     }
 
@@ -280,12 +290,15 @@ public class Player : MonoBehaviour
     {
         jumpStartTime = Time.time;
 
+
         if (isGrounded)
         {
             if(playerRigidBody.velocity.x == 0f)
                 playerRigidBody.AddForce(new Vector2(0, 15f + shadowXSpeed / 2), ForceMode2D.Impulse);
             else
                 playerRigidBody.AddForce(new Vector2(0, 15f + Mathf.Abs(playerRigidBody.velocity.x) / 2), ForceMode2D.Impulse);
+            
+            AudioManager.Instance.PlaySFX(0);
         }
         else
         {
@@ -297,16 +310,20 @@ public class Player : MonoBehaviour
                     playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
 
                 playerRigidBody.AddForce(new Vector2(15f * -touchingWallFrom.x, 25f), ForceMode2D.Impulse);
+                AudioManager.Instance.PlaySFX(0);
+
             }
             else if(availableAirJumps > 0)
             {
-                //Ait Jump
+                //Air Jump
                 // Reset Falling Speed
                 if (playerRigidBody.velocity.y < 0f)
                     playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
 
                 availableAirJumps--;
                 playerRigidBody.AddForce(new Vector2(0, 15f), ForceMode2D.Impulse);
+                AudioManager.Instance.PlaySFX(0);
+
             }
         }
     }
@@ -321,6 +338,7 @@ public class Player : MonoBehaviour
     {
         playerRigidBody.AddForce(new Vector2(dashForce * lastInputDirection.x, 0f), ForceMode2D.Impulse);
         dashStartTime = Time.time;
+        AudioManager.Instance.PlaySFX(3);
     }
 
     public void ActionDash(InputAction.CallbackContext context)
@@ -332,7 +350,11 @@ public class Player : MonoBehaviour
     public void ActionInteract(InputAction.CallbackContext context)
     {
         if (context.performed && nearestInteractable != null)
+        {
             nearestInteractable.Interact();
+            AudioManager.Instance.PlaySFX(5);
+
+        }
     }
 
     public void ActionAttack(InputAction.CallbackContext context)
@@ -348,6 +370,8 @@ public class Player : MonoBehaviour
             nearestEnemy.ApplyDamage();
 
             enemyCrossHair.SetActive(false);
+
+            AudioManager.Instance.PlaySFX(4);
         }
     }
 

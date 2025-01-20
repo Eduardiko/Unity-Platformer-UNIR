@@ -32,6 +32,7 @@ public class Checkpoint : MonoBehaviour
         {
             player = collision.gameObject.GetComponent<Player>();
             player.LastCheckpoint = this;
+            AudioManager.Instance.PlaySFX(7);
         }
     }
 
