@@ -72,7 +72,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 99
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0.80784315, g: 1, b: 0.29411766, a: 1}
   m_FlipX: 0
@@ -240,7 +240,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 99
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0.80784315, g: 1, b: 0.29411766, a: 1}
   m_FlipX: 0
@@ -324,7 +324,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 99
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0.80784315, g: 1, b: 0.29411766, a: 1}
   m_FlipX: 0
@@ -516,25 +516,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b12d0fab959c1e43b75550cca073a0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeBetweenBullets: 2
-  health: 0
+  movementSpeed: 30
+  maximumXSpeed: 35
+  maximumYSpeed: 15
+  shadowXSpeed: 0
+  dashForce: 15
+  dashOverflowDuration: 0.5
+  jumpOverflowDuration: 1.5
+  searchInteractableRadius: 5
+  searchEnemyRadius: 10
+  groundCheckDistance: 0.6
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  searchInteractableRadius: 5
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
-  searchEnemyRadius: 10
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
   interactableCrossHair: {fileID: 1803878828998595901}
   enemyCrossHair: {fileID: 407281900990201705}
-  maxSquash: 0.6
-  maxStretch: 1.4
-  stretchFactor: 0.05
-  smoothSpeed: 0.5
 --- !u!114 &2238204963149900000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -824,7 +826,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 99
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0.80784315, g: 1, b: 0.29411766, a: 1}
   m_FlipX: 0
@@ -908,7 +910,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 99
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0.80784315, g: 1, b: 0.29411766, a: 1}
   m_FlipX: 0

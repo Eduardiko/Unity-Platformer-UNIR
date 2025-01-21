@@ -21,15 +21,15 @@ public class Player : MonoBehaviour
     [SerializeField] private float dashOverflowDuration = 0.5f;
     private float dashStartTime = 0f;
 
+    [SerializeField] private int maxAirJumps = 0;
     [SerializeField] private float jumpOverflowDuration = 1.5f;
+    private int availableAirJumps = 0;
     private float jumpStartTime = 0f;
 
     [SerializeField] private float searchInteractableRadius = 5f;
     [SerializeField] private float searchEnemyRadius = 10f;
     [SerializeField] private float groundCheckDistance = 0.6f;
 
-    private int maxAirJumps = 0;
-    private int availableAirJumps = 0;
 
 
     // Continous Input Actions
@@ -74,6 +74,8 @@ public class Player : MonoBehaviour
 
         interactableCrossHair.SetActive(false);
         enemyCrossHair.SetActive(false);
+
+        availableAirJumps = maxAirJumps;
     }
 
     private void Update()
