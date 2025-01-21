@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class FollowPlayer : MonoBehaviour
 {
-    public Transform player;
-    public float smoothTime = 0.3f;
-    public Vector3 offset = new Vector3(0, 0, -10);
+    [SerializeField] private Transform player;
+    [SerializeField] private float smoothTime = 0.3f;
+    [SerializeField] private Vector3 offset = new Vector3(0, 0, -10);
 
     private Vector3 velocity = Vector3.zero;
 

@@ -12,6 +12,4 @@ public abstract class Interactable : MonoBehaviour
     public int GoNegative { get => goNegative; set => goNegative = value; }
 
     public abstract void Interact();
-
-    //public abstract void ResetInteractable();
 }

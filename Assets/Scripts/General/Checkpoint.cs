@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
 {
-    // list positions
-    // list reactivate
-    // return stats to player -> max jumps, canDash, 
-
     [SerializeField] private GameObject[] objectsToReturn;
-    private Dictionary<GameObject, Vector2> initialPositions;
-
     [SerializeField] private int maxAirJumps;
     [SerializeField] private bool canDash;
 
+    private Dictionary<GameObject, Vector2> initialPositions;
     private Player player;
 
     private void Start()

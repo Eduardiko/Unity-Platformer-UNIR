@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class Door : Interactable
 {
-    public Vector2 direction = Vector2.zero;
-    public float distance = 0f;
-    public float duration = 0f;
+    [SerializeField] private Vector2 direction = Vector2.zero;
+    [SerializeField] private float distance = 0f;
+    [SerializeField] private float duration = 0f;
 
 
     public override void Interact()

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LevelUP : MonoBehaviour
 {
-    public PlayerUpgrades upgradeType;
+    [SerializeField] private PlayerUpgrades upgradeType;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

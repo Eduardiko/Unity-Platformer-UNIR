@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Button : MonoBehaviour
 {
-    public Interactable[] objectsToActivate;
+    [SerializeField] private Interactable[] objectsToActivate;
 
     public void Interact()
     {

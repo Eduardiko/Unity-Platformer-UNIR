@@ -11,70 +11,51 @@ public enum PlayerUpgrades {
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float timeBetweenBullets = 2f;
+    // Stats
+    [SerializeField] private float movementSpeed = 30f;
+    [SerializeField] private float maximumXSpeed = 35f;
+    [SerializeField] private float maximumYSpeed = 15f;
+    [SerializeField] private float shadowXSpeed = 0f;
 
-    protected Collider2D playerCollider;
-    protected SpriteRenderer playerRenderer;
-    private Rigidbody2D playerRigidBody;
+    [SerializeField] private float dashForce = 15f;
+    [SerializeField] private float dashOverflowDuration = 0.5f;
+    private float dashStartTime = 0f;
 
-    // Continous Input Actions
-    private PlayerInput playerInput;
-    private InputAction moveAction;
-    private InputAction shootAction;
+    [SerializeField] private float jumpOverflowDuration = 1.5f;
+    private float jumpStartTime = 0f;
 
-    private float timeToShoot = 0;
-    private int phase = 1;
-    private float movementSpeed = 30f;
-    private float maximumXSpeed = 35f;
-    private float maximumYSpeed = 15f;
-    private float shadowXSpeed = 0f;
-    [HideInInspector] public int health = 3;
-
-    private Vector2 lastInputDirection = Vector2.zero;
-
-    float dashForce = 15f;
-    float dashOverflowDuration = 0.5f;
-    float dashStartTime = 0f;
-
-    float jumpOverflowDuration = 1.5f;
-    float jumpStartTime = 0f;
-
-    float easeOutSpeedTime = 1.5f;
-    float elapsedEaseOutSpeedTime = 0;
-
-    private bool isGrounded = false;
-    private Vector2 touchingWallFrom = Vector2.zero;
-    private float groundCheckDistance = 0.6f;
-    public LayerMask groundLayer;
+    [SerializeField] private float searchInteractableRadius = 5f;
+    [SerializeField] private float searchEnemyRadius = 10f;
+    [SerializeField] private float groundCheckDistance = 0.6f;
 
     private int maxAirJumps = 0;
     private int availableAirJumps = 0;
 
-    private bool canWallJump = false;
 
-    public float searchInteractableRadius = 5f;
-    public LayerMask interactableLayer;
-    Interactable nearestInteractable = null;
-    
-    public float searchEnemyRadius = 10f;
-    public LayerMask enemyLayer;
-    Enemy nearestEnemy = null;
+    // Continous Input Actions
+    private Rigidbody2D playerRigidBody;
+    private PlayerInput playerInput;
+    private InputAction moveAction;
 
-    private Coroutine coyoteCoroutine = null;
 
-    public GameObject interactableCrossHair;
-    public GameObject enemyCrossHair;
+    //References
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask interactableLayer;
+    [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private GameObject interactableCrossHair;
+    [SerializeField] private GameObject enemyCrossHair;
 
     private bool isDashUnlocked = false;
+    private bool isGrounded = false;
+    private bool canWallJump = false;
 
+    private Vector2 lastInputDirection = Vector2.zero; 
+    private Vector2 touchingWallFrom = Vector2.zero;
+
+    private Interactable nearestInteractable = null;
+    private Enemy nearestEnemy = null;
     private Checkpoint lastCheckpoint = null;
-
-    public float maxSquash = 0.6f; // Minimum height when squashing
-    public float maxStretch = 1.4f; // Maximum height when stretching
-    public float stretchFactor = 0.05f; // Sensitivity to velocity changes
-    public float smoothSpeed = 0.5f; // Smoothing for transitions
-
-    private Vector3 originalScale;
+    private Coroutine coyoteCoroutine = null;
 
     public int AvailableAirJumps { get => availableAirJumps; set => availableAirJumps = value; }
     public int MaxAirJumps { get => maxAirJumps; set => maxAirJumps = value; }
@@ -86,17 +67,13 @@ public class Player : MonoBehaviour
     {
         playerInput = GetComponent<PlayerInput>();
         playerRigidBody = GetComponent<Rigidbody2D>();
-        playerRenderer = GetComponent<SpriteRenderer>();
 
         moveAction = playerInput.actions.FindAction("Move");
-        shootAction = playerInput.actions.FindAction("Shoot");
 
         StartCoroutine(UpdateShadowXSpeed());
 
         interactableCrossHair.SetActive(false);
         enemyCrossHair.SetActive(false);
-
-        originalScale = transform.localScale;
     }
 
     private void Update()
@@ -104,9 +81,6 @@ public class Player : MonoBehaviour
         PerformRayCastChecks();
         SetNearestInteractable();
         SetNearestEnemy();
-
-        if (timeToShoot > 0)
-            timeToShoot -= Time.deltaTime;
     }
 
     void FixedUpdate()
@@ -130,107 +104,6 @@ public class Player : MonoBehaviour
 
     }
 
-    void PerformRayCastChecks()
-    {
-        bool rayCastGrounded = Physics2D.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
-
-        if (rayCastGrounded)
-        {
-            isGrounded = true;
-
-            if (coyoteCoroutine != null)
-            {
-                StopCoroutine(coyoteCoroutine);
-                coyoteCoroutine = null;
-            }
-        }
-        else if (isGrounded)
-        {
-            if (coyoteCoroutine == null)
-                coyoteCoroutine = StartCoroutine(CoyoteTime());
-
-        } else if(coyoteCoroutine != null)
-        {
-            StopCoroutine(coyoteCoroutine);
-            coyoteCoroutine = null;
-        }
-
-        Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
-
-        if(isGrounded)
-            availableAirJumps = maxAirJumps;
-
-        if (Physics2D.Raycast(transform.position, Vector3.right, groundCheckDistance, groundLayer))
-        {
-            touchingWallFrom = Vector2.right;
-        } else if (Physics2D.Raycast(transform.position, Vector3.left, groundCheckDistance, groundLayer))
-        {
-            touchingWallFrom = Vector2.left;
-        } else
-        {
-            canWallJump = false;
-            touchingWallFrom = Vector2.zero;
-        } 
-
-        Debug.DrawRay(transform.position, Vector3.right * groundCheckDistance, Color.green);
-        Debug.DrawRay(transform.position, Vector3.left * groundCheckDistance, Color.green);
-
-    }
-
-    void ApplyVelocityCapWithDecay()
-    {
-        if (Mathf.Abs(playerRigidBody.velocity.x) > maximumXSpeed)
-        {
-            float elapsedTime = Time.time - dashStartTime;
-
-            if (elapsedTime < dashOverflowDuration)
-            {
-                float direction = Mathf.Sign(playerRigidBody.velocity.x);
-                float newVelocityX = Mathf.Lerp(playerRigidBody.velocity.x, direction * maximumXSpeed, elapsedTime / dashOverflowDuration);
-                playerRigidBody.velocity = new Vector2(newVelocityX, playerRigidBody.velocity.y);
-            }
-        }
-
-        if (playerRigidBody.velocity.y > maximumYSpeed)
-        {
-            float elapsedTime = Time.time - jumpStartTime;
-
-            if (elapsedTime < jumpOverflowDuration)
-            {
-                float direction = Mathf.Sign(playerRigidBody.velocity.y);
-                float newVelocityY = Mathf.Lerp(playerRigidBody.velocity.y, direction * maximumYSpeed, elapsedTime / jumpOverflowDuration);
-                playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, newVelocityY);
-            }
-        }
-
-    }
-
-    public void ApplyDamage(int ammount)
-    {
-        health-= ammount;
-
-        if (health <= 0)
-        {
-            //AudioManager.Instance.PlaySFX();
-            Die();
-        }
-    }
-
-    public void Die()
-    {
-        if (gameObject == null)
-            return;
-
-        lastCheckpoint.ResetArea();
-        playerRigidBody.velocity = Vector2.zero;
-    }
-
-    public void Heal(int ammount)
-    {
-        health+=ammount;
-        //AudioManager.Instance.PlaySFX(3, 0.3f);
-    }
-
     public void UpgradePlayer(PlayerUpgrades upgradeWith)
     {
 
@@ -249,41 +122,6 @@ public class Player : MonoBehaviour
         AudioManager.Instance.PlaySFX(1);
 
         //AudioManager.Instance.PlaySFX(2, 0.5f);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Enemy")
-            ApplyDamage(1);
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Wall")
-            canWallJump = true;
-    }
-
-    public IEnumerator DisableColliderAndBlink(float duration, float blinkInterval)
-    {
-        if (playerCollider != null && playerRenderer != null)
-        {
-
-            playerCollider.enabled = false;
-
-            float elapsedTime = 0f;
-
-            while (elapsedTime < duration)
-            {
-                playerRenderer.enabled = !playerRenderer.enabled;
-
-                yield return new WaitForSeconds(blinkInterval);
-
-                elapsedTime += blinkInterval;
-            }
-
-            playerRenderer.enabled = true;
-            playerCollider.enabled = true;
-        }
     }
 
     private void Jump()
@@ -328,12 +166,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void ActionJump(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-            Jump();
-    }
-
     private void Dash()
     {
         playerRigidBody.AddForce(new Vector2(dashForce * lastInputDirection.x, 0f), ForceMode2D.Impulse);
@@ -341,69 +173,72 @@ public class Player : MonoBehaviour
         AudioManager.Instance.PlaySFX(3);
     }
 
-    public void ActionDash(InputAction.CallbackContext context)
+    public void Die()
     {
-        if (context.performed && isDashUnlocked)
-            Dash();
+        if (gameObject == null)
+            return;
+
+        lastCheckpoint.ResetArea();
+        playerRigidBody.velocity = Vector2.zero;
     }
 
-    public void ActionInteract(InputAction.CallbackContext context)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (context.performed && nearestInteractable != null)
-        {
-            nearestInteractable.Interact();
-            AudioManager.Instance.PlaySFX(5);
-
-        }
+        if (collision.gameObject.tag == "Enemy")
+            Die();
     }
 
-    public void ActionAttack(InputAction.CallbackContext context)
+    private void OnCollisionStay2D(Collision2D collision)
     {
-        if (context.performed && nearestEnemy != null)
-        {
-            // Reset Falling Speed
-            if (playerRigidBody.velocity.y < 0f)
-                playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
-
-            playerRigidBody.AddForce(new Vector2(0f, 15f), ForceMode2D.Impulse);
-
-            nearestEnemy.ApplyDamage();
-
-            enemyCrossHair.SetActive(false);
-
-            AudioManager.Instance.PlaySFX(4);
-        }
+        if (collision.gameObject.tag == "Wall")
+            canWallJump = true;
     }
 
-    public void ActionGoToTitleSceen(InputAction.CallbackContext context)
+    private void PerformRayCastChecks()
     {
-        if (context.performed)
+        bool rayCastGrounded = Physics2D.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
+
+        if (rayCastGrounded)
         {
-            SceneChanger[] sceneChangers = FindObjectsOfType<SceneChanger>();
-            sceneChangers[0].ChangeScene("TitleScreen");
-        }
-    }
+            isGrounded = true;
 
-    IEnumerator UpdateShadowXSpeed()
-    {
-        while (true)
+            if (coyoteCoroutine != null)
+            {
+                StopCoroutine(coyoteCoroutine);
+                coyoteCoroutine = null;
+            }
+        }
+        else if (isGrounded)
         {
-            // Store the current X velocity of the Rigidbody with a delay
-            shadowXSpeed = playerRigidBody.velocity.x;
+            if (coyoteCoroutine == null)
+                coyoteCoroutine = StartCoroutine(CoyoteTime());
 
-            // Wait for 0.3 seconds before updating again
-            yield return new WaitForSeconds(0.5f);
-        }
-    }
-
-    IEnumerator CoyoteTime()
-    {
-        while (true)
+        } else if(coyoteCoroutine != null)
         {
-            yield return new WaitForSeconds(0.15f);
-
-            isGrounded = false;
+            StopCoroutine(coyoteCoroutine);
+            coyoteCoroutine = null;
         }
+
+        Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
+
+        if(isGrounded)
+            availableAirJumps = maxAirJumps;
+
+        if (Physics2D.Raycast(transform.position, Vector3.right, groundCheckDistance, groundLayer))
+        {
+            touchingWallFrom = Vector2.right;
+        } else if (Physics2D.Raycast(transform.position, Vector3.left, groundCheckDistance, groundLayer))
+        {
+            touchingWallFrom = Vector2.left;
+        } else
+        {
+            canWallJump = false;
+            touchingWallFrom = Vector2.zero;
+        } 
+
+        Debug.DrawRay(transform.position, Vector3.right * groundCheckDistance, Color.green);
+        Debug.DrawRay(transform.position, Vector3.left * groundCheckDistance, Color.green);
+
     }
 
     private void SetNearestInteractable()
@@ -473,6 +308,105 @@ public class Player : MonoBehaviour
                 closestDistance = distance;
                 nearestEnemy = enemy;
             }
+        }
+    }
+
+    private void ApplyVelocityCapWithDecay()
+    {
+        if (Mathf.Abs(playerRigidBody.velocity.x) > maximumXSpeed)
+        {
+            float elapsedTime = Time.time - dashStartTime;
+
+            if (elapsedTime < dashOverflowDuration)
+            {
+                float direction = Mathf.Sign(playerRigidBody.velocity.x);
+                float newVelocityX = Mathf.Lerp(playerRigidBody.velocity.x, direction * maximumXSpeed, elapsedTime / dashOverflowDuration);
+                playerRigidBody.velocity = new Vector2(newVelocityX, playerRigidBody.velocity.y);
+            }
+        }
+
+        if (playerRigidBody.velocity.y > maximumYSpeed)
+        {
+            float elapsedTime = Time.time - jumpStartTime;
+
+            if (elapsedTime < jumpOverflowDuration)
+            {
+                float direction = Mathf.Sign(playerRigidBody.velocity.y);
+                float newVelocityY = Mathf.Lerp(playerRigidBody.velocity.y, direction * maximumYSpeed, elapsedTime / jumpOverflowDuration);
+                playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, newVelocityY);
+            }
+        }
+
+    }
+
+    IEnumerator UpdateShadowXSpeed()
+    {
+        while (true)
+        {
+            // Store the current X velocity of the Rigidbody with a delay
+            shadowXSpeed = playerRigidBody.velocity.x;
+
+            // Wait for 0.3 seconds before updating again
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    IEnumerator CoyoteTime()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.15f);
+
+            isGrounded = false;
+        }
+    }
+
+    public void ActionJump(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            Jump();
+    }
+
+    public void ActionDash(InputAction.CallbackContext context)
+    {
+        if (context.performed && isDashUnlocked)
+            Dash();
+    }
+
+    public void ActionInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed && nearestInteractable != null)
+        {
+            nearestInteractable.Interact();
+            AudioManager.Instance.PlaySFX(5);
+
+        }
+    }
+
+    public void ActionAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed && nearestEnemy != null)
+        {
+            // Reset Falling Speed
+            if (playerRigidBody.velocity.y < 0f)
+                playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0f);
+
+            playerRigidBody.AddForce(new Vector2(0f, 15f), ForceMode2D.Impulse);
+
+            nearestEnemy.ApplyDamage();
+
+            enemyCrossHair.SetActive(false);
+
+            AudioManager.Instance.PlaySFX(4);
+        }
+    }
+
+    public void ActionGoToTitleSceen(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            SceneChanger[] sceneChangers = FindObjectsOfType<SceneChanger>();
+            sceneChangers[0].ChangeScene("TitleScreen");
         }
     }
 

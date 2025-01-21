@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
-    public Vector2[] patrolPoints;
-    public float patrolSpeed = 2f;
+    [SerializeField] public Vector2[] patrolPoints;
+    [SerializeField] private float patrolSpeed = 2f;
 
     private int currentPatrolIndex = 0;
-
     private Vector2 targetPoint;
 
     void Start()

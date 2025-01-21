@@ -37,6 +37,18 @@ public class SceneChanger : MonoBehaviour
         Application.Quit();
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Player")
+        {
+            Destroy(collision.gameObject.GetComponent<PlayerInput>());
+            collision.gameObject.GetComponent<Rigidbody2D>().velocity /= 4;
+            fadeDuration = 3f;
+            ChangeScene(onCollisionSceneName);
+            AudioManager.Instance.PlaySFX(6);
+        }
+    }
+
     public IEnumerator FadeToBlackBeforeLoad(string sceneName)
     {
         if(uiTime != null)
@@ -85,15 +97,4 @@ public class SceneChanger : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.tag == "Player")
-        {
-            Destroy(collision.gameObject.GetComponent<PlayerInput>());
-            collision.gameObject.GetComponent<Rigidbody2D>().velocity /= 4;
-            fadeDuration = 3f;
-            ChangeScene(onCollisionSceneName);
-            AudioManager.Instance.PlaySFX(6);
-        }
-    }
 }
